@@ -1,0 +1,44 @@
+@import "tailwindcss";
+:where(.css-dev-only-do-not-override-cdzvx5).ant-upload-wrapper .ant-upload-drag:not(.ant-upload-disabled):hover, :where(.css-dev-only-do-not-override-cdzvx5).ant-upload-wrapper .ant-upload-drag-hover:not(.ant-upload-disabled){
+    background-color:rgba(255, 177, 0, 0.1) ;
+    border-color: #ffb100;
+    border-width: 3px;
+   
+}
+:where(.css-dev-only-do-not-override-cdzvx5).ant-upload-wrapper .ant-upload-drag{
+    border-width: 3px;
+    border-color: #AEAEAE;
+    background-color: rgba(174, 174, 174, 0.05);
+}
+:where(.css-dev-only-do-not-override-cdzvx5).ant-upload-wrapper{
+    font-weight: 400;
+}
+:where(.css-dev-only-do-not-override-cdzvx5).ant-upload-wrapper .ant-upload-list.ant-upload-list-picture .ant-upload-list-item .ant-upload-list-item-thumbnail, :where(.css-dev-only-do-not-override-cdzvx5).ant-upload-wrapper .ant-upload-list.ant-upload-list-picture-card .ant-upload-list-item .ant-upload-list-item-thumbnail, :where(.css-dev-only-do-not-override-cdzvx5).ant-upload-wrapper .ant-upload-list.ant-upload-list-picture-circle .ant-upload-list-item .ant-upload-list-item-thumbnail{
+    width: 30px;
+    height: 30px;
+    margin-right: 5px;
+    margin-left: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+:where(.css-dev-only-do-not-override-cdzvx5).ant-upload-wrapper .ant-upload-list .ant-upload-list-item .ant-upload-list-item-name{
+    margin-bottom: 10px;
+}
+:where(.css-dev-only-do-not-override-cdzvx5).ant-upload-wrapper .ant-upload-list .ant-upload-list-item .ant-upload-list-item-actions{
+    margin-bottom: 10px;
+}
+:where(.css-dev-only-do-not-override-cdzvx5).ant-btn-variant-outlined, :where(.css-dev-only-do-not-override-cdzvx5).ant-btn-variant-dashed{
+    border-color: #ffb100;
+    padding: 22px 16px;
+    color: #ffb100;
+    font-weight: 600;
+    font-size:16px;
+    
+}
+:where(.css-dev-only-do-not-override-cdzvx5).ant-btn-variant-outlined:not(:disabled):not(.ant-btn-disabled):hover, :where(.css-dev-only-do-not-override-cdzvx5).ant-btn-variant-dashed:not(:disabled):not(.ant-btn-disabled):hover{
+    border-color: #ffb100;
+    color: white;
+    background: #ffb100;
+    
+}
