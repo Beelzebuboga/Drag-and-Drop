@@ -4,7 +4,12 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(),
-      tailwindcss(),
-  ]
+  plugins: [react(), tailwindcss()],
+  components: {
+    Spin: {
+      defaultProps: {
+        style: { color: '#ffb100' }
+      }
+    }
+  }
 })
