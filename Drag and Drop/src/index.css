@@ -53,3 +53,14 @@
 :where(.css-dev-only-do-not-override-cdzvx5).ant-upload-wrapper .ant-upload-list.ant-upload-list-picture .ant-upload-list-item, :where(.css-dev-only-do-not-override-cdzvx5).ant-upload-wrapper .ant-upload-list.ant-upload-list-picture-card .ant-upload-list-item, :where(.css-dev-only-do-not-override-cdzvx5).ant-upload-wrapper .ant-upload-list.ant-upload-list-picture-circle .ant-upload-list-item{
     width: auto;
 }
+:where(.css-dev-only-do-not-override-cdzvx5).ant-upload-wrapper .ant-upload-list .ant-upload-list-item-container{
+    height: auto;
+    margin-top: 200;
+}
+:where(.css-dev-only-do-not-override-cdzvx5).ant-upload-wrapper .ant-upload-list .ant-upload-list-item{
+    margin-top: 20px;
+}
+:where(.css-dev-only-do-not-override-cdzvx5).ant-spin .ant-spin-dot-item{
+    background-color: #0F5862;
+
+}
