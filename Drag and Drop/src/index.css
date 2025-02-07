@@ -68,3 +68,58 @@
     height: 220px;
     margin: auto;
 }
+
+/* Add these styles at the end of the file */
+:where(.css-dev-only-do-not-override-cdzvx5).ant-table-wrapper .ant-table-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+
+:where(.css-dev-only-do-not-override-cdzvx5).ant-table-wrapper .ant-table-thead > tr > th {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+:where(.css-dev-only-do-not-override-cdzvx5).ant-pagination .ant-pagination-options-size-changer{
+    display: none;
+}
+:where(.css-dev-only-do-not-override-cdzvx5).ant-pagination .ant-pagination-item-active:hover{
+    border-color: #ffb100;
+}
+:where(.css-dev-only-do-not-override-cdzvx5).ant-pagination .ant-pagination-item-active:hover a{
+    color: #ffb100;
+}
+:where(.css-dev-only-do-not-override-cdzvx5).ant-pagination .ant-pagination-item-active a{
+    color: #0F5862;
+}
+:where(.css-dev-only-do-not-override-cdzvx5).ant-pagination .ant-pagination-item-active{
+    border-color: #0F5862;
+}
+:where(.css-dev-only-do-not-override-cdzvx5).ant-table-wrapper .ant-table-thead >tr>th, :where(.css-dev-only-do-not-override-cdzvx5).ant-table-wrapper .ant-table-thead >tr>td{
+    background-color: #0F5862;
+    color: white;
+}
+
+:where(.css-dev-only-do-not-override-cdzvx5).ant-spin .ant-spin-dot {
+  font-size: 40px;
+}
+
+:where(.css-dev-only-do-not-override-cdzvx5).ant-spin .ant-spin-dot-item {
+  width: 16px;
+  height: 16px;
+  background-color: #ffb100;
+  animation-duration: 1s;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+}
+
+:where(.css-dev-only-do-not-override-cdzvx5).ant-spin-spinning {
+  animation: fadeInOut 2s infinite;
+}

@@ -95,16 +95,35 @@ export default function App() {
       title: header,
       dataIndex: header,
       key: header,
+      width: 150,
+      ellipsis: true,
+      editable: true,
       render: (text, record, index) => {
-        const isEmptyCell = !text; // Check if the cell is empty
+        const isEmptyCell = !text;
         return (
           <div
             style={{
-              backgroundColor: isEmptyCell ? "red" : "", // Highlight empty cells in red
+              backgroundColor: isEmptyCell ? "red" : "",
               color: isEmptyCell ? "white" : "",
               padding: "8px",
               borderRadius: "4px",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              maxWidth: "150px",
+              cursor: "text",
             }}
+            title={text}
+            contentEditable={true}
+            onBlur={(e) => {
+              const newData = [...csvData];
+              const fileDataIndex = Math.floor(index / newData[0].data.length);
+              const rowIndex = index % newData[0].data.length;
+              newData[fileDataIndex].data[rowIndex][header] = e.target.innerText;
+              setCsvData(newData);
+              validateData();
+            }}
+            suppressContentEditableWarning={true}
           >
             {text}
           </div>
@@ -267,14 +286,19 @@ export default function App() {
           {/* Step 3: Show file preview and validation */}
           {isPreviewVisible && !uploading && (
             <div style={{ width: "100%", marginTop: "20px" }}>
-              <h2 className="text-lg font-bold text-[#0F5862]">File Preview</h2>
+              <h2 className="text-lg mb-5 font-bold text-[#0F5862]">File Preview</h2>
               <Table
                 dataSource={csvData.flatMap(fileData => fileData.data)}
                 columns={columns}
                 rowKey={(record, index) => index}
                 pagination={{ pageSize: 5 }}
                 onChange={validateData}
-                style={{ backgroundColor: "#f9f9f9", borderRadius: "8px" }} // Adjust table background color
+                style={{ 
+                  backgroundColor: "#f9f9f9", 
+                  borderRadius: "8px",
+                  width: "100%",
+                }}
+                scroll={{ x: 'max-content' }} // Enable horizontal scrolling if needed
                 bordered
               />
               {invalidData.length > 0 && (
