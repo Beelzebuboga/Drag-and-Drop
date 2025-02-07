@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Upload, message, Spin, Table } from "antd";
-import { DeleteOutlined, FileOutlined } from "@ant-design/icons"; // Import FileOutlined icon
+import { DeleteOutlined, FileOutlined } from "@ant-design/icons";
 import Papa from "papaparse";
 import UploadImage from "./assets/Upload.png";
 
@@ -29,8 +29,8 @@ export default function App() {
           message.success("File uploaded successfully! Review it below.");
         } else {
           message.error("No data found in the CSV file. Returning to page 1.");
-          setIsFileListVisible(false); // Hide page 2
-          setIsPreviewVisible(false); // Ensure preview is hidden
+          setIsFileListVisible(false);
+          setIsPreviewVisible(false); 
         }
       },
       error: (err) => {
@@ -51,13 +51,13 @@ export default function App() {
       });
     });
     setInvalidData(invalidRows);
-    return invalidRows.length > 0; // Return true if there are invalid rows
+    return invalidRows.length > 0;
   };
 
   const handleUpload = () => {
     if (validateData()) {
       message.error("Please fill in the missing data before submitting.");
-      return; // Prevent upload if there are invalid rows
+      return; 
     }
 
     if (fileList.length > 0) {
@@ -181,7 +181,7 @@ export default function App() {
                 accept=".csv"
                 beforeUpload={(file) => {
                   setFileList((prevFileList) => [...prevFileList, file]);
-                  handleFileParse(file); // Parse the file for review
+                  handleFileParse(file); 
                   return false;
                 }}
               >
@@ -339,17 +339,42 @@ export default function App() {
             <div
               className="w-full h-64 flex flex-col justify-center items-center rounded-xl"
               style={{
-                backgroundColor: "rgba(255, 177, 0, 0.1)",
+                backgroundColor: "rgba(255, 177, 0, 0.05)",
                 borderColor: "#ffb100",
                 borderWidth: "3px",
                 borderStyle: "dashed",
                 position: "relative",
+                transition: "all 0.3s ease",
               }}
             >
-              <Spin size="large" style={{ position: "absolute", zIndex: 1, color: "#ffb100" }} />
-              <h1 style={{ marginTop: "100px", fontWeight: "bold", fontSize: "20px", color: "#" }}>
-                Uploading...
-              </h1>
+              <div className="text-center">
+                <Spin 
+                  size="large" 
+                  style={{ 
+                    color: "#ffb100",
+                    marginBottom: "20px"
+                  }} 
+                />
+                <h1 
+                  style={{ 
+                    fontWeight: "bold", 
+                    fontSize: "24px", 
+                    color: "#0F5862",
+                    marginTop: "20px"
+                  }}
+                >
+                  Uploading your files...
+                </h1>
+                <p 
+                  style={{ 
+                    color: "#AEAEAE",
+                    marginTop: "10px",
+                    fontSize: "16px"
+                  }}
+                >
+                  Please wait while we process your data
+                </p>
+              </div>
             </div>
           )}
         </div>
