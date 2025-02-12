@@ -44,7 +44,7 @@ export default function App() {
     const invalidRows = [];
     csvData.forEach((fileData) => {
       fileData.data.forEach((row, index) => {
-        const invalidColumns = Object.keys(row).filter((key) => !row[key]);
+        const invalidColumns = Object.keys(row).filter((key) => !row[key] || !/^[a-z0-9&*@.\-, ]+$/i.test(row[key]));
         if (invalidColumns.length > 0) {
           invalidRows.push({ fileName: fileData.fileName, index, columns: invalidColumns });
         }
@@ -56,7 +56,7 @@ export default function App() {
 
   const handleUpload = () => {
     if (validateData()) {
-      message.error("Please fill in the missing data before submitting.");
+      message.error("Please fill in the missing data and correct invalid entries before submitting.");
       return; 
     }
 
@@ -100,14 +100,14 @@ export default function App() {
       editable: true,
       render: (text, record, index) => {
         const isEmptyCell = !text;
+        const isValidAlphanumeric = /^[a-z0-9&*@.\- ]+$/i.test(text);
         return (
           <div
             style={{
-              backgroundColor: isEmptyCell ? "red" : "",
-              color: isEmptyCell ? "white" : "",
+              backgroundColor: isEmptyCell || !isValidAlphanumeric ? "red" : "",
+              color: isEmptyCell || !isValidAlphanumeric ? "white" : "",
               padding: "8px",
               borderRadius: "4px",
-              whiteSpace: "nowrap",
               overflow: "hidden",
               textOverflow: "ellipsis",
               maxWidth: "150px",
@@ -119,9 +119,17 @@ export default function App() {
               const newData = [...csvData];
               const fileDataIndex = Math.floor(index / newData[0].data.length);
               const rowIndex = index % newData[0].data.length;
-              newData[fileDataIndex].data[rowIndex][header] = e.target.innerText;
+              const newText = e.target.innerText;
+              newData[fileDataIndex].data[rowIndex][header] = newText;
               setCsvData(newData);
-              validateData();
+              const invalidRows = validateData();
+              if (invalidRows.length === 0) {
+                setInvalidData([]);
+              }
+              // Update cell style based on new content
+              const isValid = /^[a-z0-9&*@.\- ]+$/i.test(newText);
+              e.target.style.backgroundColor = newText && isValid ? "" : "red";
+              e.target.style.color = newText && isValid ? "" : "white";
             }}
             suppressContentEditableWarning={true}
           >
@@ -303,7 +311,7 @@ export default function App() {
               />
               {invalidData.length > 0 && (
                 <div style={{ color: "red", marginTop: "10px" }}>
-                  <strong>Error:</strong> There are empty cells in the table. Please fill them in before submitting.
+                  <strong>Error:</strong> There are empty or invalid cells in the table. Please fill them in with alphanumeric values (including &, *, @, ., -, and spaces) before submitting.
                 </div>
               )}
               <Button
