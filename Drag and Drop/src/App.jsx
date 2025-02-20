@@ -9,7 +9,6 @@ export default function App() {
   const [uploading, setUploading] = useState(false);
   const [csvData, setCsvData] = useState([]);
   const [columns, setColumns] = useState([]);
-  const [invalidData, setInvalidData] = useState([]);
   const [isFileListVisible, setIsFileListVisible] = useState(false);
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
 
@@ -40,36 +39,31 @@ export default function App() {
     });
   };
 
-  const validateData = () => {
-    const invalidRows = [];
-    csvData.forEach((fileData) => {
-      fileData.data.forEach((row, index) => {
-        const invalidColumns = Object.keys(row).filter((key) => !row[key] || !/^[a-z0-9&*@.\-, ]+$/i.test(row[key]));
-        if (invalidColumns.length > 0) {
-          invalidRows.push({ fileName: fileData.fileName, index, columns: invalidColumns });
-        }
-      });
-    });
-    setInvalidData(invalidRows);
-    return invalidRows.length > 0;
-  };
-
   const handleUpload = () => {
-    if (validateData()) {
-      message.error("Please fill in the missing data and correct invalid entries before submitting.");
-      return; 
-    }
-
     if (fileList.length > 0) {
+      
+      const isEmptyCell = csvData.some(fileData => 
+        fileData.data.some(row => 
+          Object.values(row).some(cell => cell.trim() === "")
+        )
+      );
+  
+      if (isEmptyCell) {
+        message.error("Please fill all cells before uploading.");
+        return;
+      }
+  
       setUploading(true);
       setTimeout(() => {
         message.success("Files uploaded successfully!");
-        console.log("Uploaded files:", fileList);
+        
+    
+        console.log("Uploaded CSV Data:", csvData);
+  
         setUploading(false);
         setFileList([]);
         setCsvData([]);
         setColumns([]);
-        setInvalidData([]);
         setIsFileListVisible(false);
         setIsPreviewVisible(false);
       }, 4000);
@@ -90,58 +84,71 @@ export default function App() {
   };
 
   const handleProceedToPreview = () => {
-    const headers = Object.keys(csvData[0]?.data[0] || {});
-    const tableColumns = headers.map((header) => ({
-      title: header,
-      dataIndex: header,
-      key: header,
-      width: 150,
-      ellipsis: true,
-      editable: true,
-      render: (text, record, index) => {
-        const isEmptyCell = !text;
-        const isValidAlphanumeric = /^[a-z0-9&*@.\- ]+$/i.test(text);
-        return (
-          <div
-            style={{
-              backgroundColor: isEmptyCell || !isValidAlphanumeric ? "red" : "",
-              color: isEmptyCell || !isValidAlphanumeric ? "white" : "",
-              padding: "8px",
-              borderRadius: "4px",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              maxWidth: "150px",
-              cursor: "text",
-            }}
-            title={text}
-            contentEditable={true}
-            onBlur={(e) => {
-              const newData = [...csvData];
-              const fileDataIndex = Math.floor(index / newData[0].data.length);
-              const rowIndex = index % newData[0].data.length;
-              const newText = e.target.innerText;
-              newData[fileDataIndex].data[rowIndex][header] = newText;
-              setCsvData(newData);
-              const invalidRows = validateData();
-              if (invalidRows.length === 0) {
-                setInvalidData([]);
-              }
-              // Update cell style based on new content
-              const isValid = /^[a-z0-9&*@.\- ]+$/i.test(newText);
-              e.target.style.backgroundColor = newText && isValid ? "" : "red";
-              e.target.style.color = newText && isValid ? "" : "white";
-            }}
-            suppressContentEditableWarning={true}
-          >
-            {text}
-          </div>
-        );
-      },
-    }));
+    if (csvData.length > 0) {
+      const headers = Object.keys(csvData[0].data[0] || {});
+      const tableColumns = headers.map((header) => ({
+        title: header,
+        dataIndex: header,
+        key: header,
+        width: 150,
+        ellipsis: true,
+        editable: true,
+        render: (text, record, index) => {
+          const isEmpty = text === "N/A" || text.trim() === "";
 
-    setColumns(tableColumns);
-    setIsPreviewVisible(true);
-    setIsFileListVisible(false);
+          return (
+            <div
+              style={{
+                padding: "8px",
+                borderRadius: "4px",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                maxWidth: "150px",
+                cursor: "text",
+                border: isEmpty ? "2px solid red" : "1px solid #d9d9d9", // Add red border if empty
+              }}
+              title={text}
+              contentEditable={true}
+              onClick={(e) => {
+                e.target.style.overflow = "visible";
+                e.target.style.whiteSpace = "normal";
+              }}
+              onBlur={(e) => {
+                e.target.style.overflow = "hidden";
+                e.target.style.whiteSpace = "nowrap";
+                const newText = e.target.innerText;
+
+                if (newText.trim() === "") {
+                  message.error("Cell cannot be empty.");
+                  e.target.innerText = text;
+                  return;
+                }
+
+                const regex = /^[a-zA-Z0-9\s.,/#!$%^&*;:{}=\-_`~()@+?><[]*$/;
+
+                if (regex.test(newText)) {
+                  const newData = [...csvData];
+                  const fileDataIndex = Math.floor(index / newData[0].data.length);
+                  const rowIndex = index % newData[0].data.length;
+                  newData[fileDataIndex].data[rowIndex][header] = newText;
+                  setCsvData(newData);
+                } else {
+                  message.error("Invalid input. Only alphanumeric characters, spaces, and common symbols are allowed.");
+                  e.target.innerText = text;
+                }
+              }}
+              suppressContentEditableWarning={true}
+            >
+              {text}
+            </div>
+          );
+        },
+      }));
+
+      setColumns(tableColumns);
+      setIsPreviewVisible(true);
+      setIsFileListVisible(false);
+    }
   };
 
   const handleBackToFileList = () => {
@@ -291,16 +298,15 @@ export default function App() {
             </div>
           )}
 
-          {/* Step 3: Show file preview and validation */}
+          {/* Step 3: Show file preview */}
           {isPreviewVisible && !uploading && (
             <div style={{ width: "100%", marginTop: "20px" }}>
               <h2 className="text-lg mb-5 font-bold text-[#0F5862]">File Preview</h2>
               <Table
-                dataSource={csvData.flatMap(fileData => fileData.data)}
+                dataSource={csvData.length > 0 ? csvData[0].data : []}
                 columns={columns}
                 rowKey={(record, index) => index}
                 pagination={{ pageSize: 5 }}
-                onChange={validateData}
                 style={{ 
                   backgroundColor: "#f9f9f9", 
                   borderRadius: "8px",
@@ -309,11 +315,6 @@ export default function App() {
                 scroll={{ x: 'max-content' }} // Enable horizontal scrolling if needed
                 bordered
               />
-              {invalidData.length > 0 && (
-                <div style={{ color: "red", marginTop: "10px" }}>
-                  <strong>Error:</strong> There are empty or invalid cells in the table. Please fill them in with alphanumeric values (including &, *, @, ., -, and spaces) before submitting.
-                </div>
-              )}
               <Button
                 className="mt-4"
                 onClick={handleBackToFileList}
@@ -329,12 +330,12 @@ export default function App() {
               <Button
                 className="mt-4"
                 onClick={handleUpload}
-                disabled={invalidData.length > 0 || uploading}
+                disabled={uploading}
                 style={{
                   backgroundColor: "#ffb100",
                   color: "white",
                   border: "none",
-                  cursor: invalidData.length > 0 || uploading ? "not-allowed" : "pointer",
+                  cursor: uploading ? "not-allowed" : "pointer",
                 }}
               >
                 Submit
